@@ -67,8 +67,10 @@ FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
-	apt-get install -y software-properties-common && \
+	apt-get install -y wget software-properties-common && \
+    echo deb http://download.opensuse.org/repositories/multimedia:/xiph/xUbuntu_18.04/ ./ >>/etc/apt/sources.list.d/icecast.list && \
 	add-apt-repository -y multiverse && \
+    wget -qO - https://icecast.org/multimedia-obs.key | apt-key add - && \
 	apt-get update && \
     apt-get install -y icecast2 darkice libasound2 libasound2-plugins alsa-utils alsa-oss jackd1 jack-tools xvfb curl && \
     apt-get clean
