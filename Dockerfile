@@ -23,7 +23,7 @@ COPY icecast.xml /etc/icecast2/icecast.xml
 COPY darkice.cfg /etc/darkice.cfg
 
 COPY startup.scd /root/.config/SuperCollider/startup.scd
-COPY radio.sc /radio.sc
+COPY nattradion /nattradion
 
 COPY Procfile Procfile
 
