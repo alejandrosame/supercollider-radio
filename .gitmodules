@@ -1,0 +1,3 @@
+[submodule "nattradion"]
+	path = nattradion
+	url = https://github.com/jpburstrom/nattradion
