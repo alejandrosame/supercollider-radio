@@ -30,6 +30,7 @@ RUN apt-get update \
     pkg-config \
     unzip \
     wget \
+    xvfb \
   \
   && rm -rf /var/lib/apt/lists/*
 
@@ -57,10 +58,17 @@ RUN cd $HOME/src \
   && cmake --build . --config Release --target install \
   && rm -rf $HOME/src
 
+COPY install.scd /install.scd
+COPY asoundrc /root/.asoundrc
+COPY startup.scd /root/.config/SuperCollider/
+
 RUN wget -q https://bin.equinox.io/c/ekMN3bCZFUn/forego-stable-linux-amd64.tgz -O forego.tgz && \
 	tar xvf forego.tgz && \
 	rm forego.tgz && \
-	chmod +x forego
+	chmod +x forego && \
+    mv forego /usr/local/bin/forego && \
+    xvfb-run -a sclang /install.scd && \
+    echo "ok"
 
 FROM ubuntu:18.04
 
@@ -72,17 +80,15 @@ RUN apt-get update && \
 	add-apt-repository -y multiverse && \
     wget -qO - https://icecast.org/multimedia-obs.key | apt-key add - && \
 	apt-get update && \
-    apt-get install -y icecast2 darkice libasound2 libasound2-plugins alsa-utils alsa-oss jackd1 jack-tools xvfb curl && \
+    apt-get install -y icecast2 darkice libasound2 libasound2-plugins alsa-utils alsa-oss jackd1 jack-tools xvfb && \
     apt-get clean
 
-COPY --from=builder forego /usr/bin/forego
 COPY --from=builder /usr/local /usr/local
-COPY asoundrc /root/.asoundrc
+COPY --from=builder /root /root
 
 COPY icecast.xml /etc/icecast2/icecast.xml
 COPY darkice.cfg /etc/darkice.cfg
 
-COPY startup.scd /root/.config/SuperCollider/startup.scd
 COPY nattradion /nattradion
 
 COPY Procfile Procfile
