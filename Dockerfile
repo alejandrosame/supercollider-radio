@@ -42,7 +42,7 @@ RUN mkdir -p $HOME/src \
   && mkdir -p build \
   && cd build \
   && cmake -DCMAKE_BUILD_TYPE="Release" -DNATIVE=ON -DBUILD_TESTING=OFF -DSUPERNOVA=OFF -DSC_WII=OFF -DSC_QT=OFF -DSC_ED=OFF -DSC_EL=OFF -DSC_VIM=OFF .. \
-  && make -j4 \
+  && make -j1 \
   && make install \
   && ldconfig
   #&& ls -R /usr/local/share/SuperCollider \
@@ -87,13 +87,14 @@ COPY --from=builder /usr/local /usr/local
 COPY --from=builder /root /root
 
 COPY icecast.xml /etc/icecast2/icecast.xml
+COPY stream.nattradion.org.pem /usr/share/icecast/ssl/stream.nattradion.org.pem
 COPY darkice.cfg /etc/darkice.cfg
 
 COPY nattradion /nattradion
 
 COPY Procfile Procfile
 
-EXPOSE 8000
+EXPOSE 443
 RUN mv /etc/security/limits.d/audio.conf.disabled /etc/security/limits.d/audio.conf && \
 	usermod -a -G audio root
 
