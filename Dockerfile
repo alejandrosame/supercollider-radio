@@ -91,6 +91,7 @@ COPY stream.nattradion.org.pem /usr/share/icecast/ssl/stream.nattradion.org.pem
 COPY darkice.cfg /etc/darkice.cfg
 
 COPY nattradion /nattradion
+COPY config.scd /nattradion/config.scd
 
 COPY Procfile Procfile
 
@@ -99,3 +100,4 @@ RUN mv /etc/security/limits.d/audio.conf.disabled /etc/security/limits.d/audio.c
 	usermod -a -G audio root
 
 CMD ["forego", "start"]
+#CMD ["bash"]
