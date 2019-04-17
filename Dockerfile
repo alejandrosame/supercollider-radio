@@ -67,7 +67,7 @@ RUN wget -q https://bin.equinox.io/c/ekMN3bCZFUn/forego-stable-linux-amd64.tgz -
 	rm forego.tgz && \
 	chmod +x forego && \
     mv forego /usr/local/bin/forego && \
-    xvfb-run -a sclang /install.scd && \
+    xvfb-run -a sclang -D /install.scd && \
     echo "ok"
 
 FROM ubuntu:18.04
