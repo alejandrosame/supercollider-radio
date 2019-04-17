@@ -2,4 +2,4 @@
 
 DIR=`dirname $0`
 
-docker build -t nattradion $DIR
+sudo docker build -t nattradion $DIR

@@ -2,4 +2,6 @@
 
 : ${NATTRADION_ASSETS:=/home/johannes/nattradion-assets}
 
-docker run -v "$NATTRADION_ASSETS":/audio -p 8000:8000 nattradion
+sudo docker rm nattradion
+#-dit
+sudo docker run --name nattradion -v "$NATTRADION_ASSETS":/audio --privileged=true -p 443:443 nattradion
