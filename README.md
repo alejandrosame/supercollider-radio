@@ -1,19 +1,18 @@
-An example internet radio server using SuperCollider.
+forked from [jpburstrom's fork](https://github.com/jpburstrom/nattradion-docker) of [maxhawkins' sc_radio](https://github.com/maxhawkins/sc_radio)
 
-You could use this as a starting point for a procedural radio station.
 
-* Supercollider for audio generation
-* JACK with 'dummy' driver to work on cloud hardware
-* Darkice to connect with icecast
-* Icecast for mp3 streaming
+### build
 
-It runs headless in Docker so your composition can be running on a server in the cloud somewhere.
+```
+docker build -t sc .
+```
 
-To use, install Docker then:
+### run
 
-    docker build -t scradio .
-    docker run -p 8000:8000 scradio
+Put your SuperCollider file in a single folder, e.g. `radio` and then run:
 
-Then the stream will be accessible at http://localhost:8000/stream.mp3
+```
+docker run -v `pwd`/radio:/data -v `pwd`/recordings:/root/.local/share/SuperCollider/Recordings -p 8124:8000 sc
+```
 
-I've only tested this on Linux.
+you can use this docker image to render SuperCollider files to audio (by recording) or you can listen to as a radio at `localhost:8000/radio.mp3`.

@@ -1,11 +1,11 @@
-FROM ubuntu:18.04 as builder
+FROM ubuntu:20.04 as builder
 
 ENV LANG C.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV SC_VERSION 3.10.2
-ENV SC_MAJORVERSION 3.10
-ENV SC_PLUGIN_VERSION 3.10.0
+ENV SC_VERSION 3.12.0
+ENV SC_MAJORVERSION 3.12
+ENV SC_PLUGIN_VERSION 3.11.1
 
 RUN apt-get update \
   && apt-get -y upgrade \
@@ -31,14 +31,15 @@ RUN apt-get update \
     unzip \
     wget \
     xvfb \
+    libncurses5-dev \
   \
   && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p $HOME/src \
   && cd $HOME/src \
-  && wget -q https://github.com/supercollider/supercollider/releases/download/Version-$SC_VERSION/SuperCollider-$SC_VERSION-Source-linux.tar.bz2 -O sc.tar.bz2 \
+  && wget -q https://github.com/supercollider/supercollider/releases/download/Version-$SC_VERSION/SuperCollider-$SC_VERSION-Source.tar.bz2 -O sc.tar.bz2 \
   && tar xvf sc.tar.bz2 \
-  && cd SuperCollider-Source \
+  && cd SuperCollider* \
   && mkdir -p build \
   && cd build \
   && cmake -DCMAKE_BUILD_TYPE="Release" -DNATIVE=ON -DBUILD_TESTING=OFF -DSUPERNOVA=OFF -DSC_WII=OFF -DSC_QT=OFF -DSC_ED=OFF -DSC_EL=OFF -DSC_VIM=OFF .. \
@@ -54,7 +55,7 @@ RUN cd $HOME/src \
   && cd sc3-plugins-$SC_PLUGIN_VERSION-Source \
   && mkdir -p build \
   && cd build \
-  && cmake -DSC_PATH=$HOME/src/SuperCollider-Source -DNATIVE=ON -DHOA_UGENS=OFF -DSUPERNOVA=OFF -DAY=OFF .. \
+  && cmake -DSC_PATH=$HOME/src/SuperCollider-$SC_VERSION-Source -DCMAKE_BUILD_TYPE=Release -DHOA_UGENS=OFF -DSUPERNOVA=OFF -DAY=OFF .. \
   && cmake --build . --config Release --target install \
   && rm -rf $HOME/src
 
@@ -70,7 +71,7 @@ RUN wget -q https://bin.equinox.io/c/ekMN3bCZFUn/forego-stable-linux-amd64.tgz -
     xvfb-run -a sclang -D /install.scd && \
     echo "ok"
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -80,24 +81,22 @@ RUN apt-get update && \
 	add-apt-repository -y multiverse && \
     wget -qO - https://icecast.org/multimedia-obs.key | apt-key add - && \
 	apt-get update && \
-    apt-get install -y icecast2 darkice libasound2 libasound2-plugins alsa-utils alsa-oss jackd1 jack-tools xvfb && \
+    apt-get install -y icecast2 darkice libasound2 libasound2-plugins alsa-utils alsa-oss jackd1 jack-tools xvfb libreadline-dev && \
     apt-get clean
 
 COPY --from=builder /usr/local /usr/local
 COPY --from=builder /root /root
 
 COPY icecast.xml /etc/icecast2/icecast.xml
-COPY stream.nattradion.org.pem /usr/share/icecast/ssl/stream.nattradion.org.pem
 COPY darkice.cfg /etc/darkice.cfg
 
-COPY nattradion /nattradion
-COPY config.scd /nattradion/config.scd
+#COPY radio /radio
+#COPY config.scd /radio/config.scd
 
 COPY Procfile Procfile
 
-EXPOSE 443
+EXPOSE 8000
 RUN mv /etc/security/limits.d/audio.conf.disabled /etc/security/limits.d/audio.conf && \
-	usermod -a -G audio root
+  usermod -a -G audio root
 
 CMD ["forego", "start"]
-#CMD ["bash"]
