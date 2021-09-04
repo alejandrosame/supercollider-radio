@@ -1,4 +1,4 @@
+darkice: /etc/darkice.sh
+icecast2: /etc/icecast.sh
 jackd: jackd -r -d dummy -r 44100
-icecast2: icecast2 -c /etc/icecast2/icecast.xml
-darkice: darkice -c /etc/darkice.cfg
-sclang: xvfb-run -a sclang /data/*.scd
+sclang: /etc/sclang.sh 

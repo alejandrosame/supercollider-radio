@@ -89,6 +89,12 @@ COPY --from=builder /root /root
 
 COPY icecast.xml /etc/icecast2/icecast.xml
 COPY darkice.cfg /etc/darkice.cfg
+COPY darkice.sh /etc/darkice.sh
+RUN chmod +x /etc/darkice.sh
+COPY sclang.sh /etc/sclang.sh
+RUN chmod +x /etc/sclang.sh
+COPY icecast.sh /etc/icecast.sh
+RUN chmod +x /etc/icecast.sh
 
 #COPY radio /radio
 #COPY config.scd /radio/config.scd
