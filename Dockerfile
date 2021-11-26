@@ -63,12 +63,13 @@ COPY install.scd /install.scd
 COPY asoundrc /root/.asoundrc
 COPY startup.scd /root/.config/SuperCollider/
 
-RUN wget -q https://bin.equinox.io/c/ekMN3bCZFUn/forego-stable-linux-amd64.tgz -O forego.tgz && \
-	tar xvf forego.tgz && \
-	rm forego.tgz && \
-	chmod +x forego && \
-    mv forego /usr/local/bin/forego && \
-    xvfb-run -a sclang -D /install.scd && \
+# Install forego
+ENV PATH="${PATH}:/usr/local/go/bin"
+RUN wget -c https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz -O - | tar -xz -C /usr/local && \
+	go version && \
+	go get -u github.com/ddollar/forego
+
+RUN xvfb-run -a sclang -D /install.scd && \
     echo "ok"
 
 FROM ubuntu:20.04
@@ -105,4 +106,4 @@ EXPOSE 8000
 RUN mv /etc/security/limits.d/audio.conf.disabled /etc/security/limits.d/audio.conf && \
   usermod -a -G audio root
 
-CMD ["forego", "start"]
+CMD ["/root/go/bin/forego", "start"]
